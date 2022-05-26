@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -57,23 +58,33 @@ public class Main {
                 .mapToObj(e -> (char)e)
                 .collect(Collectors.toList());
 
-        BruteforceListRecursion(bruteforceKey, key);
+        BruteforceListRecursion(bruteforceKey, key, 2);
 
-        long elapsedTime = System.nanoTime() - start;
+        long elapsedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         System.out.println("Found " + keyStr + " key in " + elapsedTime + "ms!");
     }
 
-    public  static void BruteforceListRecursion(List<Character> bruteforceKey, List<Character> key, boolean is) {
+    public static Boolean BruteforceListRecursion(List<Character> bruteforceKey, List<Character> key, int current) {
         List<Character> symbols = "0123456789abcdefABCDEF"
                 .chars()
                 .mapToObj(e -> (char)e)
                 .collect(Collectors.toList());
-
-        for (int i = 2; i < key.size(); i++) {
-
+        int c = 1;
+        if (current == key.size()) {
+            return bruteforceKey.equals(key);
         }
-
+        while (bruteforceKey.get(current) != 'F') {
+            if(BruteforceListRecursion(bruteforceKey, key, current + 1)) {
+                return true;
+            }
+            bruteforceKey.set(current, symbols.get(c));
+            if (bruteforceKey.equals(key)) {
+                return true;
+            }
+            c++;
+        }
+        bruteforceKey.set(current, '0');
+        return bruteforceKey.equals(key);
     }
-
 }
 
